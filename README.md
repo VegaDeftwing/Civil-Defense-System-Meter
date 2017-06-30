@@ -1,6 +1,8 @@
 # Civil Defense System Meter
 Display CPU and RAM usage on a modded CD Radiation Meter
 
+![alt text](https://github.com/VegaDeftwing/Civil-Defense-System-Meter/blob/master/radiation_meter.jpg "Yes, I know it's upside down")
+
 be sure to open the port of the arduino using
 
 ~~~
