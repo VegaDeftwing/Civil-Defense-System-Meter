@@ -1,17 +1,17 @@
 from __future__ import print_function
 import psutil
+import time
 import serial
 import sys
 import threading
 import glob
+import re
 
 def checkbtn(buttons):
     while 1:
         try:
             btnpress = buttons.read_until("\n")
-            print(btnpress,end='')
-            if btnpress == '2':
-                print("Button 1 pressed")
+            print(re.sub('[^A-Za-z0-9]+', '', btnpress), end='')
         except:
             pass    
 
@@ -39,9 +39,8 @@ for port in ports:
             rad = s
         if name == "BUTTONS\r\n":
             print("BUTTONS starting...")
-            s.close
-            s = serial.Serial(port, 9600, timeout=1)
             buttons = s
+            buttons.timeout = 1
         s.close()
         result.append(port)
         names.append(name)
@@ -50,6 +49,7 @@ for port in ports:
 
 print(result)
 print(names)
+#buttons = serial.Serial("COM12", 9600, timeout=1)
 if buttons.isOpen() == False:
     buttons.open()
 if rad.isOpen() == False:
@@ -92,3 +92,4 @@ while 1:
         rad.write(ram_formattedG)
         rad.write(ram_formattedB)
         rad.write(yellow)
+
