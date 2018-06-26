@@ -11,9 +11,13 @@ def checkbtn(buttons):
     while 1:
         try:
             btnpress = buttons.read_until("\n")
+            # There was a strange character coming from the arduino
+            # button code, this was the best fix I could think of
+            # thre are no new lines, but long term this shouldn't
+            # event print anyways
             print(re.sub('[^A-Za-z0-9]+', '', btnpress), end='')
         except:
-            pass    
+            pass
 
 
 
@@ -27,8 +31,6 @@ elif sys.platform.startswith('darwin'):
 else:
     raise EnvironmentError('Unsupported platform')
 
-result = []
-names = []
 for port in ports:
     try:
         s = serial.Serial(port, 9600, timeout=4)
@@ -47,9 +49,9 @@ for port in ports:
     except (OSError, serial.SerialException):
         pass
 
-print(result)
-print(names)
-#buttons = serial.Serial("COM12", 9600, timeout=1)
+# Currently things fail if one is missing, this doesn't
+# have to be this way so this should probbaly get moved to
+# a try/catch with each thread included separately
 if buttons.isOpen() == False:
     buttons.open()
 if rad.isOpen() == False:
@@ -57,9 +59,15 @@ if rad.isOpen() == False:
 if rad.isOpen():
     rad.write('1,255\n')
     print("Done")
+
+#Thread to check if buttons are pressed
 bThread = threading.Thread(target=checkbtn,args=[buttons])
 bThread.start()
+
+#to keep things simple and the thread count down, this thread is
+#used to do the CPU/RAD meter logic
 while 1:
+    # The rad meter takes values from 1 to 255
     cpu_percent = psutil.cpu_percent(interval=1) * 2.55
     cpu_formatted = "%d,%d\n" % (5,cpu_percent)
 
@@ -92,4 +100,3 @@ while 1:
         rad.write(ram_formattedG)
         rad.write(ram_formattedB)
         rad.write(yellow)
-
