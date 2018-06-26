@@ -44,8 +44,6 @@ for port in ports:
             buttons = s
             buttons.timeout = 1
         s.close()
-        result.append(port)
-        names.append(name)
     except (OSError, serial.SerialException):
         pass
 
